@@ -1,4 +1,4 @@
 # Python virtual environment
-cisco/prueba/
+prueba/
 *.pyc
 __pycache__/
