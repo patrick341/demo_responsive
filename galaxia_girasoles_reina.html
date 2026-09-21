@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Galaxia de Girasoles para Reina 🌻</title>
+<style>
+  :root{
+    --gold:#ffd23f;
+    --gold-deep:#f7a600;
+    --glow:#ffe27a;
+    --cream:#fff8e1;
+    --ink:#5a3d0a;
+    color-scheme: dark;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  *{box-sizing:border-box;}
+  html,body{
+    height:100%;
+    margin:0;
+    overflow:hidden;
+  }
+  body{
+    font-family: Georgia, 'Iowan Old Style', 'Palatino Linotype', serif;
+    background: radial-gradient(ellipse at 50% 100%, #1b2745 0%, #0c1024 55%, #05060f 100%);
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  /* ---------- estrellas ---------- */
+  .stars{ position:fixed; inset:0; z-index:0; }
+  .star{
+    position:absolute;
+    background:#fff;
+    border-radius:50%;
+    opacity:.6;
+    animation: twinkle var(--dur) ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity:.25; transform:scale(1); }
+    50%{ opacity:1; transform:scale(1.4); }
+  }
+
+  .shooting{
+    position:absolute;
+    width:2px; height:2px;
+    background:transparent;
+    z-index:0;
+  }
+  .shooting::before{
+    content:"";
+    position:absolute;
+    width:90px; height:2px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.9), transparent);
+    transform: rotate(-35deg);
+  }
+  .shooting{
+    animation: shoot 5s linear infinite;
+    animation-delay: var(--sdelay);
+    top: var(--stop);
+    left: var(--sleft);
+    opacity:0;
+  }
+  @keyframes shoot{
+    0%{ opacity:0; transform:translate(0,0); }
+    3%{ opacity:1; }
+    18%{ opacity:0; transform:translate(-260px,180px); }
+    100%{ opacity:0; }
+  }
+
+  /* ---------- escena ---------- */
+  .scene{
+    position:relative;
+    z-index:2;
+    width:100%;
+    max-width:640px;
+    padding: 1.5rem;
+    text-align:center;
+  }
+
+  #intro{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:1.6rem;
+    animation: fadeIn 1s ease both;
+  }
+  @keyframes fadeIn{ from{opacity:0;} to{opacity:1;} }
+
+  #intro h1{
+    color: var(--cream);
+    font-size: clamp(1.5rem, 5vw, 2.1rem);
+    font-weight:400;
+    letter-spacing:0.01em;
+    margin:0;
+    text-shadow: 0 0 18px rgba(255,210,63,0.25);
+  }
+  #intro .name{ color: var(--gold); font-style: italic; }
+
+  #openBtn{
+    padding: 1rem 2.2rem;
+    font-size: 1.05rem;
+    font-family: inherit;
+    border: none;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-deep));
+    color: #4e2f06;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow: 0 0 30px rgba(255,196,0,0.45);
+    transition: transform .25s ease, box-shadow .25s ease;
+  }
+  #openBtn:hover{ transform: translateY(-2px); box-shadow: 0 0 40px rgba(255,196,0,0.65); }
+  #openBtn:active{ transform: translateY(0); }
+  #openBtn:focus-visible{ outline: 3px solid #fff; outline-offset: 3px; }
+
+  /* ---------- ramo ---------- */
+  #bouquetWrap{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+    gap: 1.4rem;
+  }
+  #bouquetWrap.show{
+    display:flex;
+    animation: riseIn 1.1s cubic-bezier(.2,.8,.2,1) both;
+  }
+  @keyframes riseIn{
+    from{ opacity:0; transform: translateY(40px) scale(0.92); }
+    to{ opacity:1; transform: translateY(0) scale(1); }
+  }
+
+  .bouquet{
+    position:relative;
+    width: min(80vw, 360px);
+    height: min(80vw, 360px);
+    margin-top: 0.4rem;
+  }
+  .halo{
+    position:absolute;
+    left:50%; top:42%;
+    width:78%; height:78%;
+    transform:translate(-50%,-50%);
+    background: radial-gradient(circle, rgba(255,214,90,0.35) 0%, rgba(255,214,90,0.12) 45%, transparent 72%);
+    filter: blur(6px);
+    animation: haloPulse 5s ease-in-out infinite;
+    z-index:0;
+  }
+  @keyframes haloPulse{
+    0%,100%{ opacity:.7; transform:translate(-50%,-50%) scale(1); }
+    50%{ opacity:1; transform:translate(-50%,-50%) scale(1.08); }
+  }
+  .stems-svg{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    z-index:1;
+    overflow:visible;
+  }
+  .stems-svg path.stem{
+    fill:none;
+    stroke: #3f7a3d;
+    stroke-width:4;
+    stroke-linecap:round;
+  }
+  .stems-svg path.leaf-shape{
+    fill:#4f9a4a;
+    filter: drop-shadow(0 0 5px rgba(90,170,70,0.45));
+  }
+  .stems-svg .ribbon{
+    fill:#e8b23a;
+    stroke:#c98f1f;
+    stroke-width:1.5;
+  }
+  .sunflower{
+    position:absolute;
+    font-size: var(--fsz, 64px);
+    filter: drop-shadow(0 0 16px rgba(255,214,90,0.6));
+    transform: translate(-50%,-50%);
+    animation: sway var(--sdur, 4.5s) ease-in-out infinite, bloomIn .8s cubic-bezier(.3,1.4,.5,1) both;
+    animation-delay: 0s, var(--bdelay, 0s);
+    z-index:2;
+  }
+  @keyframes sway{
+    0%,100%{ transform: translate(-50%,-50%) rotate(-3deg); }
+    50%{ transform: translate(-50%,-50%) rotate(3deg); }
+  }
+  @keyframes bloomIn{
+    from{ opacity:0; transform: translate(-50%,-50%) scale(0.2); }
+    to{ opacity:1; transform: translate(-50%,-50%) scale(1); }
+  }
+  .sunflower.s1{ left:50%; top:20%; font-size:98px; --sdur:5s; --bdelay:.5s; z-index:4;}
+  .sunflower.s2{ left:27%; top:36%; font-size:70px; --sdur:4.2s; --bdelay:.35s;}
+  .sunflower.s3{ left:73%; top:36%; font-size:70px; --sdur:4.8s; --bdelay:.35s;}
+  .sunflower.s4{ left:15%; top:56%; font-size:56px; --sdur:3.8s; --bdelay:.2s;}
+  .sunflower.s5{ left:85%; top:56%; font-size:56px; --sdur:4.1s; --bdelay:.2s;}
+
+  /* pétalos ascendentes tipo "polvo dorado" */
+  .embers{ position:fixed; inset:0; pointer-events:none; z-index:1; }
+  .ember{
+    position:absolute;
+    bottom:-5vh;
+    border-radius:50%;
+    background: radial-gradient(circle, #fff6cf 0%, var(--gold) 60%, transparent 70%);
+    opacity:0;
+    animation: floatUp linear infinite;
+  }
+  @keyframes floatUp{
+    0%{ opacity:0; transform: translate(0,0); }
+    10%{ opacity:.9; }
+    90%{ opacity:.5; }
+    100%{ opacity:0; transform: translate(var(--ex,20px), -115vh); }
+  }
+
+  .card{
+    background: rgba(255,248,225,0.96);
+    border-radius: 20px;
+    padding: 1.6rem 1.8rem;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.45), 0 0 40px rgba(255,210,63,0.15);
+    max-width: 480px;
+  }
+  .card p{
+    margin:0 0 0.85rem;
+    color: var(--ink);
+    font-size: 1.08rem;
+    line-height:1.7;
+  }
+  .card p:last-child{ margin-bottom:0; font-style:italic; color:#a97a1f; }
+
+  @media (prefers-reduced-motion: reduce){
+    .sunflower, .ember, .shooting, .star, #bouquetWrap.show{ animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="stars" id="stars"></div>
+<div class="embers" id="embers"></div>
+
+<div class="scene">
+
+  <div id="intro">
+    <h1>Con cariño, para ti,<br><span class="name">amiga Reina</span> 🌻</h1>
+    <button id="openBtn">Abrir la sorpresa</button>
+  </div>
+
+  <div id="bouquetWrap">
+    <div class="bouquet">
+      <div class="halo"></div>
+      <svg class="stems-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <path class="stem" d="M50,88 C50,70 50,45 50,24" />
+        <path class="stem" d="M50,88 C46,75 34,58 27,40" />
+        <path class="stem" d="M50,88 C54,75 66,58 73,40" />
+        <path class="stem" d="M50,88 C42,78 24,66 15,60" />
+        <path class="stem" d="M50,88 C58,78 76,66 85,60" />
+        <path class="leaf-shape" d="M46,64 C36,60 30,64 28,72 C38,74 46,72 46,64 Z" />
+        <path class="leaf-shape" d="M55,68 C65,64 71,68 73,76 C63,78 55,76 55,68 Z" />
+        <ellipse class="ribbon" cx="50" cy="88" rx="7" ry="4" />
+      </svg>
+      <span class="sunflower s4">🌻</span>
+      <span class="sunflower s5">🌻</span>
+      <span class="sunflower s2">🌻</span>
+      <span class="sunflower s3">🌻</span>
+      <span class="sunflower s1">🌻</span>
+    </div>
+
+    <div class="card">
+      <p>Te mando estas flores solo porque quería alegrarte el día un poco. Contigo hasta lo más simple se vuelve bonito, y quería que lo supieras.</p>
+      <p>Gracias por tu compañía, por tu risa y por hacer más bonitos los días comunes.</p>
+      <p>Con cariño, para ti, amiga Reina 💛</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  // estrellas fijas titilando
+  const starsBox = document.getElementById('stars');
+  for(let i=0;i<90;i++){
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = (Math.random()*2 + 1).toFixed(1) + 'px';
+    s.style.width = size;
+    s.style.height = size;
+    s.style.left = Math.random()*100 + 'vw';
+    s.style.top = Math.random()*100 + 'vh';
+    s.style.setProperty('--dur', (Math.random()*3 + 2).toFixed(1) + 's');
+    starsBox.appendChild(s);
+  }
+  // estrellas fugaces ocasionales
+  for(let i=0;i<4;i++){
+    const sh = document.createElement('div');
+    sh.className = 'shooting';
+    sh.style.setProperty('--stop', Math.random()*40 + 'vh');
+    sh.style.setProperty('--sleft', (50 + Math.random()*45) + 'vw');
+    sh.style.setProperty('--sdelay', (Math.random()*6) + 's');
+    starsBox.appendChild(sh);
+  }
+
+  // motas doradas ascendiendo
+  const embers = document.getElementById('embers');
+  function spawnEmber(){
+    const e = document.createElement('div');
+    e.className = 'ember';
+    const size = (Math.random()*5 + 3);
+    e.style.width = size + 'px';
+    e.style.height = size + 'px';
+    e.style.left = Math.random()*100 + 'vw';
+    e.style.setProperty('--ex', (Math.random()*60 - 30) + 'px');
+    e.style.animationDuration = (Math.random()*6 + 7) + 's';
+    embers.appendChild(e);
+    setTimeout(()=> e.remove(), 14000);
+  }
+  setInterval(spawnEmber, 450);
+  for(let i=0;i<10;i++) setTimeout(spawnEmber, i*120);
+
+  // abrir el regalo
+  const btn = document.getElementById('openBtn');
+  const intro = document.getElementById('intro');
+  const bouquet = document.getElementById('bouquetWrap');
+  btn.addEventListener('click', () => {
+    intro.style.display = 'none';
+    bouquet.classList.add('show');
+  });
+</script>
+
+</body>
+</html>
